@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../models/dashboard_model.dart';
 import '../../services/dashboard_service.dart';
 
+import '../../widgets/menu_widget.dart';
+
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
 
@@ -51,7 +53,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         elevation: 0,
         backgroundColor: const Color(0xFF2E7D32),
         title: const Text(
-          'Data Santri Tahfidz',
+          'Santri Tahfidz',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -139,6 +141,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           children: [
             _buildUstadInfoCard(),
             const SizedBox(height: 20),
+            MenuIkonWidget(),
             _buildSantriListHeader(),
             const SizedBox(height: 12),
             _buildSantriList(),
