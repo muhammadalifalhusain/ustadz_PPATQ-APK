@@ -3,14 +3,14 @@ import 'tambah_tahfidz_screen.dart';
 import '../../models/penilaian_tahfidz_model.dart';
 import '../../services/penilaian_tahfidz_service.dart';
 
-class PenilaianTahfidzScreen extends StatefulWidget {
-  const PenilaianTahfidzScreen({Key? key}) : super(key: key);
+class TahfidzScreen extends StatefulWidget {
+  const TahfidzScreen({Key? key}) : super(key: key);
 
   @override
-  State<PenilaianTahfidzScreen> createState() => _PenilaianTahfidzScreenState();
+  State<TahfidzScreen> createState() => _TahfidzScreenState();
 }
 
-class _PenilaianTahfidzScreenState extends State<PenilaianTahfidzScreen> 
+class _TahfidzScreenState extends State<TahfidzScreen> 
     with SingleTickerProviderStateMixin {
   late Future<PenilaianTahfidzResponse?> _penilaianFuture;
   late AnimationController _animationController;
@@ -32,6 +32,21 @@ class _PenilaianTahfidzScreenState extends State<PenilaianTahfidzScreen>
     _animationController.forward();
   }
 
+  void _refreshData() {
+    setState(() {
+      _penilaianFuture = PenilaianTahfidzService().fetchPenilaianTahfidz();
+    });
+    
+    // Optional: Tampilkan feedback bahwa data sudah direfresh
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Data telah diperbarui'),
+        backgroundColor: Colors.green,
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
   void dispose() {
     _animationController.dispose();
@@ -49,7 +64,6 @@ class _PenilaianTahfidzScreenState extends State<PenilaianTahfidzScreen>
   }
 
   void _navigateToDetail(PenilaianItem data) {
-    // Handle untuk navigasi ke detail screen
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -58,7 +72,7 @@ class _PenilaianTahfidzScreenState extends State<PenilaianTahfidzScreen>
           title: Row(
             children: [
               Icon(Icons.info_outline, color: Colors.green[700]),
-              const SizedBox(width: 8),
+              const SizedBox(width: 4),
               const Text('Info'),
             ],
           ),
@@ -82,27 +96,13 @@ class _PenilaianTahfidzScreenState extends State<PenilaianTahfidzScreen>
         elevation: 0,
         backgroundColor: const Color(0xFF2E7D32),
         title: const Text(
-          'Penilaian Tahfidz',
+          'Tahfidz',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh, color: Colors.white),
-            onPressed: () {
-              setState(() {
-                _penilaianFuture = PenilaianTahfidzService().fetchPenilaianTahfidz();
-              });
-            },
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -144,35 +144,34 @@ class _PenilaianTahfidzScreenState extends State<PenilaianTahfidzScreen>
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 2),
       child: Align(
-        alignment: Alignment.centerLeft, 
+        alignment: Alignment.centerLeft,
         child: ElevatedButton.icon(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => TambahTahfidzScreen(idTahfidz: idTahfidz.toString()),
-            ),
-          );
-
-        },
-        icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text(
-          "Tambah Data",
-          style: TextStyle(color: Colors.white),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.green[700],
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          elevation: 2,
+          onPressed: () async {
+            final result = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => TambahTahfidzScreen(idTahfidz: idTahfidz.toString()),
+              ),
+            );
+            if (result == true) {
+              _refreshData();
+            }
+          },
+          icon: const Icon(Icons.add, color: Colors.white),
+          label: const Text(
+            "Tambah Data",
+            style: TextStyle(color: Colors.white),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green[700],
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            elevation: 2,
+          ),
         ),
       ),
-    ),
-  );
-}
-
-
-
+    );
+  }
   Widget _buildSearchBar() {
     return Container(
       margin: const EdgeInsets.all(16),
@@ -227,7 +226,7 @@ class _PenilaianTahfidzScreenState extends State<PenilaianTahfidzScreen>
           ),
           SizedBox(height: 16),
           Text(
-            'Memuat data penilaian...',
+            'Memuat data...',
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey,
@@ -337,7 +336,7 @@ class _PenilaianTahfidzScreenState extends State<PenilaianTahfidzScreen>
 
   Widget _buildPenilaianCard(PenilaianItem item, int index) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -345,7 +344,7 @@ class _PenilaianTahfidzScreenState extends State<PenilaianTahfidzScreen>
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 8,
-            offset: const Offset(0, 4),
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -355,7 +354,7 @@ class _PenilaianTahfidzScreenState extends State<PenilaianTahfidzScreen>
           borderRadius: BorderRadius.circular(16),
           onTap: () => _showDetailBottomSheet(item),
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(16),
             child: Row(
               children: [
                 // Avatar dengan inisial
@@ -467,7 +466,7 @@ class _PenilaianTahfidzScreenState extends State<PenilaianTahfidzScreen>
               // Handle bar
               Container(
                 margin: const EdgeInsets.symmetric(vertical: 12),
-                width: 40,
+                width: 30,
                 height: 4,
                 decoration: BoxDecoration(
                   color: Colors.grey[300],
@@ -477,7 +476,7 @@ class _PenilaianTahfidzScreenState extends State<PenilaianTahfidzScreen>
               
               // Header
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: Row(
                   children: [
                     Expanded(
@@ -524,8 +523,6 @@ class _PenilaianTahfidzScreenState extends State<PenilaianTahfidzScreen>
                     children: [
                       _buildDetailGrid(item),
                       const SizedBox(height: 20),
-                      
-                      // Action button
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton.icon(
@@ -583,7 +580,7 @@ class _PenilaianTahfidzScreenState extends State<PenilaianTahfidzScreen>
       itemBuilder: (context, index) {
         final detail = details[index];
         return Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: Colors.grey[50],
             borderRadius: BorderRadius.circular(12),
@@ -597,25 +594,33 @@ class _PenilaianTahfidzScreenState extends State<PenilaianTahfidzScreen>
                 color: const Color(0xFF2E7D32),
                 size: 24,
               ),
-              const SizedBox(height: 8),
-              Text(
-                detail['label'] as String,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.w500,
+              const SizedBox(height: 6),
+              Flexible(
+                child: Text(
+                  detail['label'] as String,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                 ),
-                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 4),
-              Text(
-                detail['value'] as String,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF2E2E2E),
+              Flexible(
+                child: Text(
+                  detail['value'].toString(),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF2E2E2E),
+                  ),
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
                 ),
-                textAlign: TextAlign.center,
               ),
             ],
           ),
@@ -623,4 +628,5 @@ class _PenilaianTahfidzScreenState extends State<PenilaianTahfidzScreen>
       },
     );
   }
+
 }

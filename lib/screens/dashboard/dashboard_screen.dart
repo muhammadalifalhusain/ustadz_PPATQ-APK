@@ -53,7 +53,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         elevation: 0,
         backgroundColor: const Color(0xFF2E7D32),
         title: const Text(
-          'Santri Tahfidz',
+          'Dashboard',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -140,8 +140,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildUstadInfoCard(),
-            const SizedBox(height: 20),
-            MenuIkonWidget(),
+            const SizedBox(height: 10),
             _buildSantriListHeader(),
             const SizedBox(height: 12),
             _buildSantriList(),
@@ -219,7 +218,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Expanded(
                   child: _buildInfoItem(
                     Icons.class_,
-                    'Kelas',
+                    '',
                     ustadSantriData!.kelas,
                   ),
                 ),
@@ -340,7 +339,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
           onTap: () {
-            // Tambahkan aksi ketika card santri ditekan
             _showSantriDetail(santri);
           },
           child: Padding(
@@ -382,38 +380,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF2E2E2E),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.badge,
-                            size: 14,
-                            color: Colors.grey[600],
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            'NIS: ${santri.noInduk}',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Icon(
-                            Icons.class_,
-                            size: 14,
-                            color: Colors.grey[600],
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            'Kelas ${santri.kelas.toUpperCase()}',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ],
                       ),
                     ],
                   ),

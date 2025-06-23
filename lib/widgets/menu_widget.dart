@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../screens/dashboard/penilaian_tahfidz_screen.dart';
+import '../screens/dashboard/tahfidz_screen.dart';
 
 
 class MenuIkonWidget extends StatelessWidget {
@@ -50,7 +50,7 @@ class MenuIkonWidget extends StatelessWidget {
                           () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => const PenilaianTahfidzScreen()),
+                              MaterialPageRoute(builder: (context) => const TahfidzScreen()),
                             );
                           },
                         ),
