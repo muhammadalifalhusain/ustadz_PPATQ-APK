@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'tambah_tahfidz_screen.dart';
 import '../../models/penilaian_tahfidz_model.dart';
-import '../../services/penilaian_tahfidz_service.dart';
+import '../../services/tahfidz_service.dart';
+import '../../services/tambah_tahfidz_service.dart';
 
 class TahfidzScreen extends StatefulWidget {
   const TahfidzScreen({Key? key}) : super(key: key);
@@ -37,7 +38,6 @@ class _TahfidzScreenState extends State<TahfidzScreen>
       _penilaianFuture = PenilaianTahfidzService().fetchPenilaianTahfidz();
     });
     
-    // Optional: Tampilkan feedback bahwa data sudah direfresh
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Data telah diperbarui'),
@@ -46,6 +46,48 @@ class _TahfidzScreenState extends State<TahfidzScreen>
       ),
     );
   }
+
+  void _confirmDelete(int idDetailTahfidz) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Konfirmasi'),
+        content: const Text('Apakah Anda yakin ingin menghapus data ini?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Batal'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () async {
+              Navigator.pop(context); 
+
+              final success = await TambahTahfidzService.deleteTahfidz(idDetailTahfidz);
+
+              if (!mounted) return; 
+
+              if (success) {
+                if (mounted) {
+                  _refreshData();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Data berhasil dihapus')),
+                  );
+                }
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Gagal menghapus data')),
+                );
+              }
+            },
+            child: const Text('Hapus'),
+          ),
+        ],
+      ),
+    );
+  }
+
+
 
   @override
   void dispose() {
@@ -432,6 +474,17 @@ class _TahfidzScreenState extends State<TahfidzScreen>
                       ),
                     ),
                     const SizedBox(width: 8),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.red.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red, size: 20),
+                        onPressed: () => _confirmDelete(item.id),
+                        tooltip: 'Hapus Data',
+                      ),
+                    ),
                     Icon(
                       Icons.chevron_right,
                       color: Colors.grey[400],
@@ -463,7 +516,6 @@ class _TahfidzScreenState extends State<TahfidzScreen>
           ),
           child: Column(
             children: [
-              // Handle bar
               Container(
                 margin: const EdgeInsets.symmetric(vertical: 12),
                 width: 30,
@@ -492,7 +544,7 @@ class _TahfidzScreenState extends State<TahfidzScreen>
                             ),
                           ),
                           Text(
-                            'Juz ${item.juz}',
+                            '${item.juz}',
                             style: TextStyle(
                               fontSize: 16,
                               color: Colors.grey[600],
@@ -522,26 +574,6 @@ class _TahfidzScreenState extends State<TahfidzScreen>
                   child: Column(
                     children: [
                       _buildDetailGrid(item),
-                      const SizedBox(height: 20),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            _navigateToDetail(item);
-                          },
-                          icon: const Icon(Icons.visibility),
-                          label: const Text('Lihat Detail Lengkap'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF2E7D32),
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -573,14 +605,14 @@ class _TahfidzScreenState extends State<TahfidzScreen>
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 1.5,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
       ),
       itemCount: details.length,
       itemBuilder: (context, index) {
         final detail = details[index];
         return Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: Colors.grey[50],
             borderRadius: BorderRadius.circular(12),
@@ -594,7 +626,7 @@ class _TahfidzScreenState extends State<TahfidzScreen>
                 color: const Color(0xFF2E7D32),
                 size: 24,
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 4),
               Flexible(
                 child: Text(
                   detail['label'] as String,

@@ -430,7 +430,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            _buildDetailRow('Nama Lengkap', santri.nama),
             _buildDetailRow('Nomor Induk', santri.noInduk.toString()),
             _buildDetailRow('Kelas', santri.kelas.toUpperCase()),
             _buildDetailRow('Kelas Tahfidz', ustadSantriData!.kelas),
