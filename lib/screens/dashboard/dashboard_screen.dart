@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'detail_tahfidz_screen.dart';
+
 import '../../models/dashboard_model.dart';
 import '../../services/dashboard_service.dart';
-
-import '../../widgets/menu_widget.dart';
+import '../../services/tahfidz_service.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -44,6 +45,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
       });
     }
   }
+
+  void getDetail(int noInduk) async {
+    final detail = await TahfidzService.getDetailTahfidz(noInduk);
+    if (detail != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DetailTahfidzScreen(detailTahfidz: detail), // 🔧 Ubah disini
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Gagal memuat detail tahfidz")),
+      );
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -151,92 +170,100 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildUstadInfoCard() {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF2E7D32), Color(0xFF4CAF50)],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+  return Container(
+    width: double.infinity,
+    decoration: BoxDecoration(
+      color: Colors.grey.shade50,
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(color: Colors.grey.shade200),
+    ),
+    child: IntrinsicHeight(
+      child: Row(
+        children: [
+          // Side accent
+          Container(
+            width: 6,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Color(0xFF2E7D32), Color(0xFF4CAF50)],
+              ),
+              borderRadius: BorderRadius.horizontal(left: Radius.circular(16)),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 28,
+                    backgroundColor: const Color(0xFF2E7D32),
+                    child: Text(
+                      ustadSantriData!.namaUstad
+                          .split(' ')
+                          .map((e) => e[0])
+                          .take(2)
+                          .join(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          ustadSantriData!.namaUstad,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1A1A1A),
+                          ),
+                        ),
+                        Text(
+                          'Ustad Pengampu',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.school,
+                              size: 14,
+                              color: Colors.grey[600],
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Kelas ${ustadSantriData!.kodeTahfidz.toUpperCase()}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.person,
-                    color: Colors.white,
-                    size: 28,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Ustad Pengampu',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 14,
-                        ),
-                      ),
-                      Text(
-                        ustadSantriData!.namaUstad,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildInfoItem(
-                    Icons.class_,
-                    '',
-                    ustadSantriData!.kelas,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildInfoItem(
-                    Icons.qr_code,
-                    'Kode Tahfidz',
-                    ustadSantriData!.kodeTahfidz.toUpperCase(),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildInfoItem(IconData icon, String label, String value) {
     return Container(
@@ -383,6 +410,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                     ],
                   ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.menu_book, color: Colors.green),
+                  tooltip: 'Lihat Tahfidz',
+                  onPressed: () {
+                    getDetail(santri.noInduk);
+                  },
                 ),
                 Icon(
                   Icons.chevron_right,

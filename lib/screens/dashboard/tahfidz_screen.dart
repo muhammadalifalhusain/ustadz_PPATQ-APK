@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'tambah_tahfidz_screen.dart';
-import '../../models/penilaian_tahfidz_model.dart';
+import '../../models/tahfidz_model.dart';
 import '../../services/tahfidz_service.dart';
 import '../../services/tambah_tahfidz_service.dart';
 
@@ -22,7 +22,7 @@ class _TahfidzScreenState extends State<TahfidzScreen>
   @override
   void initState() {
     super.initState();
-    _penilaianFuture = PenilaianTahfidzService().fetchPenilaianTahfidz();
+    _penilaianFuture = TahfidzService().getDataTahfidz();
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -35,7 +35,7 @@ class _TahfidzScreenState extends State<TahfidzScreen>
 
   void _refreshData() {
     setState(() {
-      _penilaianFuture = PenilaianTahfidzService().fetchPenilaianTahfidz();
+      _penilaianFuture = TahfidzService().getDataTahfidz();
     });
     
     ScaffoldMessenger.of(context).showSnackBar(
@@ -301,7 +301,7 @@ class _TahfidzScreenState extends State<TahfidzScreen>
           ElevatedButton.icon(
             onPressed: () {
               setState(() {
-                _penilaianFuture = PenilaianTahfidzService().fetchPenilaianTahfidz();
+                _penilaianFuture = TahfidzService().getDataTahfidz();
               });
             },
             icon: const Icon(Icons.refresh),
@@ -366,7 +366,7 @@ class _TahfidzScreenState extends State<TahfidzScreen>
     return FadeTransition(
       opacity: _fadeAnimation,
       child: ListView.builder(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
         itemCount: dataList.length,
         itemBuilder: (context, index) {
           final item = dataList[index];
@@ -378,122 +378,223 @@ class _TahfidzScreenState extends State<TahfidzScreen>
 
   Widget _buildPenilaianCard(PenilaianItem item, int index) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
+            spreadRadius: 0,
+          ),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+            spreadRadius: 0,
           ),
         ],
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           onTap: () => _showDetailBottomSheet(item),
           child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
+            padding: const EdgeInsets.all(20),
+            child: Column(
               children: [
-                // Avatar dengan inisial
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.primaries[index % Colors.primaries.length],
-                        Colors.primaries[index % Colors.primaries.length].shade300,
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(28),
-                  ),
-                  child: Center(
-                    child: Text(
-                      item.namaSantri.split(' ').map((e) => e[0]).take(2).join(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                
-                // Info utama
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.namaSantri,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF2E2E2E),
+                // Header row dengan avatar dan nama
+                Row(
+                  children: [
+                    // Avatar dengan gradient dan shadow
+                    Container(
+                      width: 64,
+                      height: 64,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Colors.primaries[index % Colors.primaries.length],
+                            Colors.primaries[index % Colors.primaries.length].shade600,
+                          ],
                         ),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.primaries[index % Colors.primaries.length].withOpacity(0.3),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF2E7D32).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                      child: Center(
                         child: Text(
-                          '${item.juz}',
+                          item.namaSantri.split(' ').map((e) => e[0]).take(2).join(),
                           style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF2E7D32),
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            letterSpacing: 0.5,
                           ),
                         ),
                       ),
-                    ],
+                    ),
+                    const SizedBox(width: 16),
+                    
+                    // Info utama
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item.namaSantri,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF1A1A1A),
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  const Color(0xFF2E7D32).withOpacity(0.1),
+                                  const Color(0xFF4CAF50).withOpacity(0.1),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: const Color(0xFF2E7D32).withOpacity(0.2),
+                                width: 1,
+                              ),
+                            ),
+                            child: Text(
+                              'Juz ${item.juz}',
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF2E7D32),
+                                letterSpacing: 0.3,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // Divider halus
+                Container(
+                  height: 1,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.transparent,
+                        Colors.grey.withOpacity(0.1),
+                        Colors.transparent,
+                      ],
+                    ),
                   ),
                 ),
                 
-                // Action buttons
+                const SizedBox(height: 16),
+                
+                // Action buttons row
                 Row(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.blue.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: IconButton(
-                        icon: const Icon(Icons.visibility, color: Colors.blue, size: 20),
-                        onPressed: () => _navigateToDetail(item),
-                        tooltip: 'Lihat Detail',
-                      ),
+                    // Quick action buttons
+                    Row(
+                      children: [
+                        _buildActionButton(
+                          icon: Icons.visibility_outlined,
+                          label: 'Detail',
+                          color: const Color(0xFF1976D2),
+                          onPressed: () => _navigateToDetail(item),
+                        ),
+                        const SizedBox(width: 12),
+                        _buildActionButton(
+                          icon: Icons.delete_outline,
+                          label: 'Hapus',
+                          color: const Color(0xFFD32F2F),
+                          onPressed: () => _confirmDelete(item.id),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 8),
+                    
+                    // Chevron dengan animasi
                     Container(
+                      padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.grey.withOpacity(0.08),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      child: IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red, size: 20),
-                        onPressed: () => _confirmDelete(item.id),
-                        tooltip: 'Hapus Data',
+                      child: Icon(
+                        Icons.arrow_forward_ios,
+                        color: Colors.grey[600],
+                        size: 16,
                       ),
-                    ),
-                    Icon(
-                      Icons.chevron_right,
-                      color: Colors.grey[400],
-                      size: 24,
                     ),
                   ],
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onPressed,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onPressed,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.08),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: color.withOpacity(0.2),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                color: color,
+                size: 18,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
           ),
         ),
       ),

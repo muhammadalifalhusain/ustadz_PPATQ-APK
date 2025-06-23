@@ -212,10 +212,10 @@ class _LoginScreenState extends State<LoginScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text('Selamat Datang',
+          Text('USTADZ PPATQ-RF',
               textAlign: TextAlign.center,
               style: GoogleFonts.poppins(
-                fontSize: 28,
+                fontSize: 25,
                 fontWeight: FontWeight.w700,
                 color: pineShadow,
               )),

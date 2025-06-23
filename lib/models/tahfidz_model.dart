@@ -94,3 +94,74 @@ class PenilaianItem {
     );
   }
 }
+
+class DetailTahfidz {
+  final String namaSantri;
+  final List<DetailTahfidzItem> data;
+
+  DetailTahfidz({
+    required this.namaSantri,
+    required this.data,
+  });
+
+  factory DetailTahfidz.fromJson(Map<String, dynamic> json) {
+    return DetailTahfidz(
+      namaSantri: json['data']['namaSantri'] ?? '-',
+      data: (json['data']['data'] as List)
+          .map((item) => DetailTahfidzItem.fromJson(item))
+          .toList(),
+    );
+  }
+}
+
+
+
+class DetailTahfidzItem{
+  final int bulan;
+  final int tahun;
+  final String juz;
+  final String hafalan;
+  final String tilawah;
+  final String kefasihan;
+  final String dayaIngat;
+  final String kelancaran;
+  final String praktekTajwid;
+  final String makhroj;
+  final String tanafus;
+  final String waqofWasol;
+  final String ghorib;
+
+  DetailTahfidzItem({
+    required this.bulan,
+    required this.tahun,
+    required this.juz,
+    required this.hafalan,
+    required this.tilawah,
+    required this.kefasihan,
+    required this.dayaIngat,
+    required this.kelancaran,
+    required this.praktekTajwid,
+    required this.makhroj,
+    required this.tanafus,
+    required this.waqofWasol,
+    required this.ghorib,
+  });
+
+  factory DetailTahfidzItem.fromJson(Map<String, dynamic> json) {
+    return DetailTahfidzItem(
+      bulan: json['bulan'] ?? 0,
+      tahun: json['tahun'] ?? 0,
+      juz: json['juz'] ?? '-',
+      hafalan: json['hafalan'] ?? '-',
+      tilawah: json['tilawah'] ?? '-',
+      kefasihan: json['kefasihan'] ?? '-',
+      dayaIngat: json['dayaIngat'] ?? '-',
+      kelancaran: json['kelancaran'] ?? '-',
+      praktekTajwid: json['praktekTajwid'] ?? '-',
+      makhroj: json['makhroj'] ?? '-',
+      tanafus: json['tanafus'] ?? '-',
+      waqofWasol: json['waqofWasol'] ?? '-',
+      ghorib: json['ghorib'] ?? '-',
+    );
+  }
+}
