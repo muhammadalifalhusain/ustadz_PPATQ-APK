@@ -26,8 +26,6 @@ class _TambahTahfidzScreenState extends State<TambahTahfidzScreen> {
   List<KodeJuz> filteredJuz = [];
   KodeJuz? selectedJuz;
   String searchJuz = '';
-
-  // Controllers untuk TextField
   final TextEditingController _santriController = TextEditingController();
   final TextEditingController _juzController = TextEditingController();
 
@@ -152,8 +150,6 @@ class _TambahTahfidzScreenState extends State<TambahTahfidzScreen> {
       );
       return;
     }
-
-    // Show loading indicator
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -168,7 +164,7 @@ class _TambahTahfidzScreenState extends State<TambahTahfidzScreen> {
       tanggal: DateFormat('yyyy-MM-dd').format(selectedDate),
       idTahfidz: widget.idTahfidz,
       noInduk: selectedSantri!.noInduk.toString(),
-      kodeJuzSurah: selectedJuz!.id,
+      kodeJuzSurah: selectedJuz!.kode,
       hafalan: nilaiMap[nilaiHafalan]!,
       tilawah: nilaiMap[nilaiTilawah]!,
       kefasihan: nilaiMap[nilaiKefasihan]!,
@@ -191,8 +187,6 @@ class _TambahTahfidzScreenState extends State<TambahTahfidzScreen> {
           backgroundColor: Colors.green,
         )
       );
-      
-      // Return true to indicate success and trigger refresh
       Navigator.pop(context, true);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -260,7 +254,7 @@ class _TambahTahfidzScreenState extends State<TambahTahfidzScreen> {
                         ),
                         onChanged: filterSantri,
                       ),
-                      // Tampilkan list santri hanya jika ada keyword search
+                      
                       if (searchKeyword.isNotEmpty && filteredSantri.isNotEmpty) ...[
                         const SizedBox(height: 10),
                         Container(
@@ -317,8 +311,6 @@ class _TambahTahfidzScreenState extends State<TambahTahfidzScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Section Juz/Surah
               Card(
                 elevation: 2,
                 child: Padding(
@@ -350,7 +342,6 @@ class _TambahTahfidzScreenState extends State<TambahTahfidzScreen> {
                         ),
                         onChanged: filterJuz,
                       ),
-                      // Tampilkan list juz hanya jika ada keyword search
                       if (searchJuz.isNotEmpty && filteredJuz.isNotEmpty) ...[
                         const SizedBox(height: 10),
                         Container(
@@ -406,8 +397,6 @@ class _TambahTahfidzScreenState extends State<TambahTahfidzScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Section Tanggal
               Card(
                 elevation: 2,
                 child: Padding(

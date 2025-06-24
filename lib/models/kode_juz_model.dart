@@ -1,12 +1,12 @@
 class KodeJuz {
-  final int id;
+  final int kode;
   final String nama;
 
-  KodeJuz({required this.id, required this.nama});
+  KodeJuz({required this.kode, required this.nama});
 
   factory KodeJuz.fromJson(Map<String, dynamic> json) {
     return KodeJuz(
-      id: json['id'] ?? 0,
+      kode: json['kode'] ?? 0,
       nama: json['nama'] ?? '',
     );
   }
