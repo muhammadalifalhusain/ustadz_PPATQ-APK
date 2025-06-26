@@ -22,7 +22,7 @@ class _TahfidzScreenState extends State<TahfidzScreen>
   @override
   void initState() {
     super.initState();
-    _penilaianFuture = TahfidzService().getDataTahfidz();
+    _penilaianFuture = TahfidzService.getDataTahfidz();
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -35,7 +35,7 @@ class _TahfidzScreenState extends State<TahfidzScreen>
 
   void _refreshData() {
     setState(() {
-      _penilaianFuture = TahfidzService().getDataTahfidz();
+      _penilaianFuture = TahfidzService.getDataTahfidz();
     });
     
     ScaffoldMessenger.of(context).showSnackBar(
@@ -274,7 +274,7 @@ class _TahfidzScreenState extends State<TahfidzScreen>
           ElevatedButton.icon(
             onPressed: () {
               setState(() {
-                _penilaianFuture = TahfidzService().getDataTahfidz();
+                _penilaianFuture = TahfidzService.getDataTahfidz();
               });
             },
             icon: const Icon(Icons.refresh),

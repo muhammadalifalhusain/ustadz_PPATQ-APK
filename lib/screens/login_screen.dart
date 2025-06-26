@@ -83,9 +83,7 @@ class _LoginScreenState extends State<LoginScreen>
     final result = await LoginService.login(email, password);
 
     if (result['success'] == true) {
-      final ustadz = result['data']; // Tipe: Ustadz
-
-      // Simpan sesi ke SharedPreferences
+      final ustadz = result['data']; 
       await SessionManager.saveUstadzSession(
         idUser: ustadz.idUser,
         nama: ustadz.namaUstadz,
