@@ -1,9 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/login_service.dart'; 
 import '../screens/dashboard/main.dart';
+import '../utils/session_manager.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -76,34 +76,44 @@ class _LoginScreenState extends State<LoginScreen>
 
   Future<void> _handleLogin() async {
     setState(() => _isLoading = true);
+
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
     final result = await LoginService.login(email, password);
 
     if (result['success'] == true) {
-      final data = result['data'];
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('idUser', data['id']);
-      await prefs.setString('nama', data['nama']);
-      await prefs.setString('photo', data['photo'] ?? '');
-      await prefs.setBool('is_logged_in', true);
+      final ustadz = result['data']; // Tipe: Ustadz
+
+      // Simpan sesi ke SharedPreferences
+      await SessionManager.saveUstadzSession(
+        idUser: ustadz.idUser,
+        nama: ustadz.namaUstadz,
+        photo: ustadz.photo,
+        accessToken: ustadz.accessToken,
+        expiresIn: ustadz.expiresIn,
+      );
+
       if (!mounted) return;
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const MainScreen()),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result['message']),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(result['message']),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
     }
 
-    setState(() => _isLoading = false);
+    if (mounted) setState(() => _isLoading = false);
   }
+
 
   @override
   Widget build(BuildContext context) {

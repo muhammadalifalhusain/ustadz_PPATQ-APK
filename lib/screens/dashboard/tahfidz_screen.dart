@@ -87,8 +87,6 @@ class _TahfidzScreenState extends State<TahfidzScreen>
     );
   }
 
-
-
   @override
   void dispose() {
     _animationController.dispose();
@@ -103,31 +101,6 @@ class _TahfidzScreenState extends State<TahfidzScreen>
                       return item.namaSantri.toLowerCase().contains(_searchQuery.toLowerCase()) ||
              item.juz.toLowerCase().contains(_searchQuery.toLowerCase());
     }).toList();
-  }
-
-  void _navigateToDetail(PenilaianItem data) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Row(
-            children: [
-              Icon(Icons.info_outline, color: Colors.green[700]),
-              const SizedBox(width: 4),
-              const Text('Info'),
-            ],
-          ),
-          content: const Text('Menu detail akan segera hadir!\nFitur ini sedang dalam pengembangan.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('OK', style: TextStyle(color: Colors.green[700])),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
@@ -476,7 +449,7 @@ class _TahfidzScreenState extends State<TahfidzScreen>
                               ),
                             ),
                             child: Text(
-                              'Juz ${item.juz}',
+                              '${item.juz}',
                               style: const TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w700,
@@ -508,20 +481,12 @@ class _TahfidzScreenState extends State<TahfidzScreen>
                 ),
                 
                 const SizedBox(height: 16),
-                
-                // Action buttons row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Quick action buttons
                     Row(
                       children: [
-                        _buildActionButton(
-                          icon: Icons.visibility_outlined,
-                          label: 'Detail',
-                          color: const Color(0xFF1976D2),
-                          onPressed: () => _navigateToDetail(item),
-                        ),
+                        
                         const SizedBox(width: 12),
                         _buildActionButton(
                           icon: Icons.delete_outline,

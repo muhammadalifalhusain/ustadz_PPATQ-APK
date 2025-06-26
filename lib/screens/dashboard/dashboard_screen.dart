@@ -52,7 +52,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => DetailTahfidzScreen(detailTahfidz: detail), // 🔧 Ubah disini
+          builder: (context) => DetailTahfidzScreen(detailTahfidz: detail), 
         ),
       );
     } else {
@@ -170,134 +170,96 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildUstadInfoCard() {
-  return Container(
-    width: double.infinity,
-    decoration: BoxDecoration(
-      color: Colors.grey.shade50,
-      borderRadius: BorderRadius.circular(16),
-      border: Border.all(color: Colors.grey.shade200),
-    ),
-    child: IntrinsicHeight(
-      child: Row(
-        children: [
-          // Side accent
-          Container(
-            width: 6,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Color(0xFF2E7D32), Color(0xFF4CAF50)],
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: IntrinsicHeight(
+        child: Row(
+          children: [
+            // Side accent
+            Container(
+              width: 6,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color(0xFF2E7D32), Color(0xFF4CAF50)],
+                ),
+                borderRadius: BorderRadius.horizontal(left: Radius.circular(16)),
               ),
-              borderRadius: BorderRadius.horizontal(left: Radius.circular(16)),
             ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 28,
-                    backgroundColor: const Color(0xFF2E7D32),
-                    child: Text(
-                      ustadSantriData!.namaUstad
-                          .split(' ')
-                          .map((e) => e[0])
-                          .take(2)
-                          .join(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 28,
+                      backgroundColor: const Color(0xFF2E7D32),
+                      child: Text(
+                        ustadSantriData!.namaUstad
+                            .split(' ')
+                            .map((e) => e[0])
+                            .take(2)
+                            .join(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          ustadSantriData!.namaUstad,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF1A1A1A),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            ustadSantriData!.namaUstad,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF1A1A1A),
+                            ),
                           ),
-                        ),
-                        Text(
-                          'Ustad Pengampu',
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.school,
-                              size: 14,
+                          Text(
+                            'Ustad Pengampu',
+                            style: TextStyle(
+                              fontSize: 13,
                               color: Colors.grey[600],
                             ),
-                            const SizedBox(width: 4),
-                            Text(
-                              'Kelas ${ustadSantriData!.kodeTahfidz.toUpperCase()}',
-                              style: TextStyle(
-                                fontSize: 12,
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.school,
+                                size: 14,
                                 color: Colors.grey[600],
                               ),
-                            ),
-                          ],
-                        ),
-                      ],
+                              const SizedBox(width: 4),
+                              Text(
+                                'Kelas ${ustadSantriData!.kodeTahfidz.toUpperCase()}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-
-  Widget _buildInfoItem(IconData icon, String label, String value) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, color: Colors.white70, size: 16),
-              const SizedBox(width: 6),
-              Text(
-                label,
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 12,
+                  ],
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
