@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../services/login_service.dart'; 
@@ -12,20 +11,15 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen>
-    with TickerProviderStateMixin {
-  static const Color sageGreen = Color(0xFF9CAF88);
-  static const Color mintCream = Color(0xFFF0F4EC);
-  static const Color forestMist = Color(0xFF6B7D5C);
-  static const Color eucalyptus = Color(0xFFA8B5A0);
-  static const Color pineShadow = Color(0xFF4A5D3A);
-  static const Color mossStone = Color(0xFF7A8471);
-
-  late AnimationController _animationController;
-  late AnimationController _pulseController;
-  late Animation<double> _fadeAnimation;
-  late Animation<double> _slideAnimation;
-  late Animation<double> _pulseAnimation;
+class _LoginScreenState extends State<LoginScreen> {
+  // Color palette focused on green theme
+  static const Color primaryGreen = Color(0xFF2E7D32);
+  static const Color lightGreen = Color(0xFF4CAF50);
+  static const Color darkGreen = Color(0xFF1B5E20);
+  static const Color softGreen = Color(0xFFE8F5E8);
+  static const Color whiteGreen = Color(0xFFF1F8E9);
+  static const Color textDark = Color(0xFF2E2E2E);
+  static const Color textLight = Color(0xFF666666);
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -33,42 +27,7 @@ class _LoginScreenState extends State<LoginScreen>
   bool _isLoading = false;
 
   @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
-      vsync: this,
-    );
-    _pulseController = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    )..repeat(reverse: true);
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
-      ),
-    );
-
-    _slideAnimation = Tween<double>(begin: 50.0, end: 0.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(0.3, 1.0, curve: Curves.easeOut),
-      ),
-    );
-
-    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.05).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
-    );
-
-    _animationController.forward();
-  }
-
-  @override
   void dispose() {
-    _animationController.dispose();
-    _pulseController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -104,6 +63,10 @@ class _LoginScreenState extends State<LoginScreen>
           SnackBar(
             content: Text(result['message']),
             backgroundColor: Colors.redAccent,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         );
       }
@@ -112,183 +75,263 @@ class _LoginScreenState extends State<LoginScreen>
     if (mounted) setState(() => _isLoading = false);
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [mintCream, Color(0xFFE8F0E3), Color(0xFFDEE8D7)],
-            stops: [0.0, 0.5, 1.0],
-          ),
-        ),
-        child: SafeArea(
-          child: AnimatedBuilder(
-            animation: _animationController,
-            builder: (context, child) {
-              return Transform.translate(
-                offset: Offset(0, _slideAnimation.value),
-                child: Opacity(
-                  opacity: _fadeAnimation.value,
-                  child: _buildLoginContent(),
-                ),
-              );
-            },
+      backgroundColor: whiteGreen,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+          child: Column(
+            children: [
+              const SizedBox(height: 40),
+              _buildHeader(),
+              const SizedBox(height: 50),
+              _buildLoginForm(),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildLoginContent() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        children: [
-          const SizedBox(height: 40),
-          _buildFuturisticHeader(),
-          const SizedBox(height: 30),
-          _buildLoginForm(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFuturisticHeader() {
-    return AnimatedBuilder(
-      animation: _pulseController,
-      builder: (context, child) {
-        return Transform.scale(
-          scale: _pulseAnimation.value,
-          child: Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: const RadialGradient(
-                colors: [sageGreen, eucalyptus, forestMist],
-                stops: [0.0, 0.7, 1.0],
+  Widget _buildHeader() {
+    return Column(
+      children: [
+        // Logo Container
+        Container(
+          width: 120,
+          height: 120,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: primaryGreen.withOpacity(0.2),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: sageGreen.withOpacity(0.4),
-                  blurRadius: 30,
-                  offset: const Offset(0, 10),
-                  spreadRadius: 5,
-                ),
-                BoxShadow(
-                  color: eucalyptus.withOpacity(0.2),
-                  blurRadius: 50,
-                  offset: const Offset(0, 20),
-                  spreadRadius: 10,
-                ),
-              ],
-            ),
-            child: const Icon(Icons.eco_outlined, size: 50, color: Colors.white),
+            ],
           ),
-        );
-      },
+          child: ClipOval(
+            child: Image.asset(
+              'assets/images/logo.png',
+              width: 80,
+              height: 80,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) {
+                return Icon(
+                  Icons.account_balance,
+                  size: 60,
+                  color: primaryGreen,
+                );
+              },
+            ),
+          ),
+        ),
+        const SizedBox(height: 24),
+        Text(
+          'USTADZ',
+          style: GoogleFonts.poppins(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: primaryGreen,
+            letterSpacing: 2,
+          ),
+        ),
+        Text(
+          'Pondok Raudlatul Falah',
+          style: GoogleFonts.poppins(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: darkGreen,
+          ),
+        ),
+        Text(
+          'Pati',
+          style: GoogleFonts.poppins(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: textLight,
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildLoginForm() {
     return Container(
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: mossStone.withOpacity(0.3), width: 1),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: sageGreen.withOpacity(0.1),
-            blurRadius: 30,
-            offset: const Offset(0, 15),
-            spreadRadius: 5,
-          ),
-          BoxShadow(
-            color: Colors.white.withOpacity(0.8),
+            color: primaryGreen.withOpacity(0.1),
             blurRadius: 20,
-            offset: const Offset(-5, -5),
+            offset: const Offset(0, 10),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text('USTADZ PPATQ-RF',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(
-                fontSize: 25,
-                fontWeight: FontWeight.w700,
-                color: pineShadow,
-              )),
+          Text(
+            'Masuk ke Akun Anda',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: textDark,
+            ),
+          ),
           const SizedBox(height: 8),
-          Text('Silakan masuk ke akun Anda',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.poppins(
-                fontSize: 14,
-                color: forestMist,
-              )),
-          const SizedBox(height: 40),
-          _buildTextField(_emailController, 'Email', Icons.person_outline_rounded),
-          const SizedBox(height: 24),
-          _buildTextField(_passwordController, 'Password', Icons.lock_outline_rounded, isPassword: true),
+          Text(
+            'Silakan masukkan email dan password',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              color: textLight,
+            ),
+          ),
           const SizedBox(height: 32),
-          _buildFuturisticButton(),
+          _buildTextField(
+            controller: _emailController,
+            label: 'Email',
+            icon: Icons.email_outlined,
+            keyboardType: TextInputType.emailAddress,
+          ),
+          const SizedBox(height: 20),
+          _buildTextField(
+            controller: _passwordController,
+            label: 'Password',
+            icon: Icons.lock_outline,
+            isPassword: true,
+          ),
+          const SizedBox(height: 32),
+          _buildLoginButton(),
         ],
       ),
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label, IconData icon, {bool isPassword = false}) {
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    bool isPassword = false,
+    TextInputType? keyboardType,
+  }) {
     return TextFormField(
       controller: controller,
       obscureText: isPassword ? _obscurePassword : false,
-      style: GoogleFonts.poppins(fontSize: 16, color: pineShadow),
+      keyboardType: keyboardType,
+      style: GoogleFonts.poppins(
+        fontSize: 16,
+        color: textDark,
+      ),
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: forestMist),
+        labelStyle: GoogleFonts.poppins(
+          color: textLight,
+          fontSize: 14,
+        ),
+        prefixIcon: Icon(
+          icon,
+          color: primaryGreen,
+          size: 22,
+        ),
         suffixIcon: isPassword
             ? IconButton(
-                icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility, color: forestMist),
+                icon: Icon(
+                  _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                  color: textLight,
+                  size: 22,
+                ),
                 onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
               )
             : null,
         filled: true,
-        fillColor: mintCream.withOpacity(0.8),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        fillColor: softGreen,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(
+            color: primaryGreen.withOpacity(0.2),
+            width: 1,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(
+            color: primaryGreen,
+            width: 2,
+          ),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
       ),
     );
   }
-
-  Widget _buildFuturisticButton() {
-    return SizedBox(
-      height: 56,
+  Widget _buildLoginButton() {
+    return Container(
+      height: 54,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        gradient: LinearGradient(
+          colors: [primaryGreen, lightGreen],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: primaryGreen.withOpacity(0.3),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: ElevatedButton(
         onPressed: _isLoading ? null : _handleLogin,
         style: ElevatedButton.styleFrom(
-          backgroundColor: sageGreen,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
         child: _isLoading
-            ? const CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
+            ? const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2.5,
+                ),
+              )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Masuk',
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      )),
+                  Text(
+                    'MASUK',
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                      letterSpacing: 1,
+                    ),
+                  ),
                   const SizedBox(width: 8),
-                  const Icon(Icons.arrow_forward_rounded, color: Colors.white),
+                  const Icon(
+                    Icons.arrow_forward_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ],
               ),
       ),

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'detail_tahfidz_screen.dart';
 
+import '../login_screen.dart';
+
 import '../../models/dashboard_model.dart';
+
+import '../../utils/session_manager.dart';
 import '../../services/dashboard_service.dart';
 import '../../services/tahfidz_service.dart';
 
@@ -16,6 +20,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   UstadSantriResponse? ustadSantriData;
   bool isLoading = true;
   String errorMessage = '';
+  bool isNotUstadzRole = false;
+
 
   @override
   void initState() {
@@ -27,17 +33,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
     setState(() {
       isLoading = true;
       errorMessage = '';
+      isNotUstadzRole = false; 
     });
 
     try {
       final data = await UstadSantriService.fetchSantriList();
-      setState(() {
-        ustadSantriData = data;
-        isLoading = false;
-        if (data == null) {
-          errorMessage = 'Gagal mengambil data santri';
-        }
-      });
+      if (data == null) {
+        setState(() {
+          isLoading = false;
+          isNotUstadzRole = true; // ini penting agar masuk ke view khusus role salah
+        });
+      } else {
+        setState(() {
+          ustadSantriData = data;
+          isLoading = false;
+        });
+      }
     } catch (e) {
       setState(() {
         isLoading = false;
@@ -45,6 +56,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       });
     }
   }
+
 
   void getDetail(int noInduk) async {
     final detail = await TahfidzService.getDetailTahfidz(noInduk);
@@ -140,15 +152,40 @@ class _DashboardScreenState extends State<DashboardScreen> {
       );
     }
 
-    if (ustadSantriData == null) {
-      return const Center(
-        child: Text(
-          'Tidak ada data tersedia',
-          style: TextStyle(fontSize: 16, color: Colors.grey),
+    // ✅ Jika tidak ada data santri (bukan role ustadz)
+    if (isNotUstadzRole) {
+      return Center(
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.block,
+                size: 80,
+                color: Colors.red[300],
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Maaf, anda tercatat bukan pengajar(tahfidz)',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.red,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 10),
+              _buildLogoutButton(context),
+            ],
+          ),
         ),
       );
     }
 
+
+    // ✅ Data tersedia
     return RefreshIndicator(
       onRefresh: _loadSantriData,
       color: const Color(0xFF2E7D32),
@@ -160,10 +197,51 @@ class _DashboardScreenState extends State<DashboardScreen> {
           children: [
             _buildUstadInfoCard(),
             const SizedBox(height: 10),
+            _buildLogoutButton(context),
+            const SizedBox(height: 10),
             _buildSantriListHeader(),
             const SizedBox(height: 12),
             _buildSantriList(),
           ],
+        ),
+      ),
+    );
+  }
+
+
+  Widget _buildLogoutButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 216, 47, 72),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: const Color.fromARGB(255, 192, 33, 22).withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: ListTile(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          leading: const Icon(Icons.logout, color: Colors.white),
+          title: const Text(
+            'Keluar Akun',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          onTap: () async {
+            await SessionManager.clearSession();
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => LoginScreen()),
+              (route) => false,
+            );
+          },
         ),
       ),
     );
