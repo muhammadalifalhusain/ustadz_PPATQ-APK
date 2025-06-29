@@ -148,7 +148,7 @@ class DetailTahfidzScreen extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Juz ${item.juz}',
+                                      '${item.juz}',
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 18,

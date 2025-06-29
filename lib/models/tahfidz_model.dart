@@ -45,6 +45,7 @@ class PenilaianTahfidzData {
 class PenilaianItem {
   final int id;
   final int bulan;
+  final int tahun;
   final String namaSantri;
   final String juz;
   final String hafalan;
@@ -57,10 +58,12 @@ class PenilaianItem {
   final String tanafus;
   final String waqofWasol;
   final String ghorib;
+  final String namaBulan;
 
   PenilaianItem({
     required this.id,
     required this.bulan,
+    required this.tahun,
     required this.namaSantri,
     required this.juz,
     required this.hafalan,
@@ -73,12 +76,14 @@ class PenilaianItem {
     required this.tanafus,
     required this.waqofWasol,
     required this.ghorib,
+    required this.namaBulan,
   });
 
   factory PenilaianItem.fromJson(Map<String, dynamic> json) {
     return PenilaianItem(
       id: json['id'] ?? 0,
       bulan: json['bulan'] ?? 0,
+      tahun: json['tahun'] ?? 0,
       namaSantri: json['namaSantri'] ?? '',
       juz: json['juz'] ?? '',
       hafalan: json['hafalan'] ?? '',
@@ -91,6 +96,7 @@ class PenilaianItem {
       tanafus: json['tanafus'] ?? '',
       waqofWasol: json['waqofWasol'] ?? '',
       ghorib: json['ghorib'] ?? '',
+      namaBulan: json['namaBulan'] ?? '',
     );
   }
 }

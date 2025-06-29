@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'detail_tahfidz_screen.dart';
 
+import 'tambah_tahfidz_screen.dart';
 import '../login_screen.dart';
 
 import '../../models/dashboard_model.dart';
@@ -20,6 +21,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   UstadSantriResponse? ustadSantriData;
   bool isLoading = true;
   String errorMessage = '';
+  int? idTahfidz;
   bool isNotUstadzRole = false;
 
 
@@ -27,8 +29,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     _loadSantriData();
+    _loadIdTahfidz(); 
   }
 
+  void _loadIdTahfidz() async {
+    final response = await TahfidzService.getDataTahfidz();
+    if (response != null && response.data != null && mounted) {
+      setState(() {
+        idTahfidz = response.data!.idTahfidz;
+      });
+    } else {
+      print('❌ Gagal mengambil ID Tahfidz dari data response');
+    }
+  }
   Future<void> _loadSantriData() async {
     setState(() {
       isLoading = true;
@@ -41,7 +54,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       if (data == null) {
         setState(() {
           isLoading = false;
-          isNotUstadzRole = true; // ini penting agar masuk ke view khusus role salah
+          isNotUstadzRole = true; 
         });
       } else {
         setState(() {
@@ -56,7 +69,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       });
     }
   }
-
 
   void getDetail(int noInduk) async {
     final detail = await TahfidzService.getDetailTahfidz(noInduk);
@@ -74,8 +86,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,14 +93,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: const Color(0xFF2E7D32),
-        title: const Text(
-          'Dashboard',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+        automaticallyImplyLeading: false,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const [
+            Text(
+              'Dashboard',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              'V.29.6',
+              style: TextStyle(
+                color: Colors.white70,
+                fontWeight: FontWeight.w500,
+                fontSize: 13,
+              ),
+            ),
+          ],
         ),
-        centerTitle: true,
+        centerTitle: false,
       ),
       body: _buildBody(),
     );
@@ -117,7 +141,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       );
     }
-
     if (errorMessage.isNotEmpty) {
       return Center(
         child: Column(
@@ -151,8 +174,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       );
     }
-
-    // ✅ Jika tidak ada data santri (bukan role ustadz)
     if (isNotUstadzRole) {
       return Center(
         child: SingleChildScrollView(
@@ -183,9 +204,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       );
     }
-
-
-    // ✅ Data tersedia
     return RefreshIndicator(
       onRefresh: _loadSantriData,
       color: const Color(0xFF2E7D32),
@@ -195,10 +213,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildUstadInfoCard(),
-            const SizedBox(height: 10),
             _buildLogoutButton(context),
-            const SizedBox(height: 10),
+            _buildUstadInfoCard(),
+            const SizedBox(height: 16),
             _buildSantriListHeader(),
             const SizedBox(height: 12),
             _buildSantriList(),
@@ -208,44 +225,54 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-
   Widget _buildLogoutButton(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 216, 47, 72),
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: const Color.fromARGB(255, 192, 33, 22).withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: ListTile(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          leading: const Icon(Icons.logout, color: Colors.white),
-          title: const Text(
-            'Keluar Akun',
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
+      padding: const EdgeInsets.only(bottom: 12, left: 4),
+      child: SizedBox(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 216, 47, 72),
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: const Color.fromARGB(255, 192, 33, 22).withOpacity(0.1),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(14),
+            onTap: () async {
+              await SessionManager.clearSession();
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (_) => LoginScreen()),
+                (route) => false,
+              );
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                Icon(Icons.logout, color: Colors.white, size: 16),
+                SizedBox(width: 6),
+                Text(
+                  'Keluar',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
             ),
           ),
-          onTap: () async {
-            await SessionManager.clearSession();
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => LoginScreen()),
-              (route) => false,
-            );
-          },
         ),
       ),
     );
   }
+
 
   Widget _buildUstadInfoCard() {
     return Container(
@@ -258,7 +285,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: IntrinsicHeight(
         child: Row(
           children: [
-            // Side accent
             Container(
               width: 6,
               decoration: const BoxDecoration(
@@ -275,22 +301,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 padding: const EdgeInsets.all(20),
                 child: Row(
                   children: [
-                    CircleAvatar(
-                      radius: 28,
-                      backgroundColor: const Color(0xFF2E7D32),
-                      child: Text(
-                        ustadSantriData!.namaUstad
-                            .split(' ')
-                            .map((e) => e[0])
-                            .take(2)
-                            .join(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    ClipOval(
+                      child: Image.network(
+                        'https://manajemen.ppatq-rf.id/assets/img/upload/photo/${ustadSantriData!.photoUstad}',
+                        width: 56,
+                        height: 56,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return CircleAvatar(
+                            radius: 28,
+                            backgroundColor: Colors.grey.shade400,
+                            child: const Icon(Icons.person, color: Colors.white),
+                          );
+                        },
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return SizedBox(
+                            width: 56,
+                            height: 56,
+                            child: const Center(
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            ),
+                          );
+                        },
                       ),
                     ),
+
                     const SizedBox(width: 16),
                     Expanded(
                       child: Column(
@@ -341,6 +377,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     );
   }
+
 
   Widget _buildSantriListHeader() {
     final totalSantri = ustadSantriData!.listSantri.length;
@@ -412,29 +449,34 @@ class _DashboardScreenState extends State<DashboardScreen> {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.primaries[index % Colors.primaries.length],
-                        Colors.primaries[index % Colors.primaries.length].shade300,
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  child: Center(
-                    child: Text(
-                      santri.nama.split(' ').map((e) => e[0]).take(2).join(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
+                ClipOval(
+                  child: Image.network(
+                    'https://manajemen.ppatq-rf.id/assets/img/upload/photo/${santri.photo ?? 'default.jpg'}',
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: 50,
+                        height: 50,
+                        color: Colors.grey.shade300,
+                        child: const Icon(Icons.person, color: Colors.white),
+                      );
+                    },
+                    loadingBuilder: (context, child, progress) {
+                      if (progress == null) return child;
+                      return Container(
+                        width: 50,
+                        height: 50,
+                        alignment: Alignment.center,
+                        child: const CircularProgressIndicator(strokeWidth: 2),
+                      );
+                    },
                   ),
                 ),
+
+
+
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(
@@ -458,6 +500,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     getDetail(santri.noInduk);
                   },
                 ),
+                IconButton(
+                  icon: const Icon(Icons.add_circle, color: Colors.blue),
+                  tooltip: 'Tambah Data',
+                  onPressed: () {
+                    if (idTahfidz == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('ID Tahfidz belum tersedia'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return;
+                    }
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => TambahTahfidzScreen(
+                          idTahfidz: idTahfidz!.toString(), 
+                          noInduk: santri.noInduk,
+                          namaSantri: santri.nama,
+                        ),
+                      ),
+                    );
+                  },
+                ),
                 Icon(
                   Icons.chevron_right,
                   color: Colors.grey[400],
@@ -469,6 +536,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     );
   }
+
 
   void _showSantriDetail(Santri santri) {
     showModalBottomSheet(

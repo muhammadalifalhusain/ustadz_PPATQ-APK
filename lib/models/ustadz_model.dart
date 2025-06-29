@@ -18,8 +18,9 @@ class Ustadz {
       idUser: json['id'] ?? 0,
       namaUstadz: (json['nama'] ?? '').toString(),
       photo: (json['photo'] ?? '').toString(),
-      accessToken: (json['access_token'] ?? '').toString(),
-      expiresIn: int.tryParse(json['expires_in'].toString()) ?? 0,
+      accessToken: (json['accesToken'] ?? '').toString(), // 👈 sesuaikan dengan respons backend
+      expiresIn: int.tryParse(json['expiresIn'].toString()) ?? 0,
     );
   }
+
 }

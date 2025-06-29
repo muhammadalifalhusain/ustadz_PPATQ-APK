@@ -12,7 +12,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // Color palette focused on green theme
   static const Color primaryGreen = Color(0xFF2E7D32);
   static const Color lightGreen = Color(0xFF4CAF50);
   static const Color darkGreen = Color(0xFF1B5E20);
@@ -71,7 +70,6 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     }
-
     if (mounted) setState(() => _isLoading = false);
   }
 
@@ -84,9 +82,9 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
           child: Column(
             children: [
-              const SizedBox(height: 40),
+              const SizedBox(height: 20),
               _buildHeader(),
-              const SizedBox(height: 50),
+              const SizedBox(height: 15),
               _buildLoginForm(),
             ],
           ),
@@ -98,7 +96,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildHeader() {
     return Column(
       children: [
-        // Logo Container
         Container(
           width: 120,
           height: 120,

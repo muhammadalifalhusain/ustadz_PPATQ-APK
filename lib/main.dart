@@ -6,8 +6,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // ⛔️ Hanya untuk testing: hapus session biar selalu ke login dulu
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.clear();
+  // final prefs = await SharedPreferences.getInstance();
+  // await prefs.clear();
 
   runApp(const MyApp());
 }

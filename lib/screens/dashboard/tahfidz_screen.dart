@@ -110,14 +110,28 @@ class _TahfidzScreenState extends State<TahfidzScreen>
       appBar: AppBar(
         elevation: 0,
         backgroundColor: const Color(0xFF2E7D32),
-        title: const Text(
-          'Tahfidz',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+        automaticallyImplyLeading: false,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const [
+            Text(
+              'Tahfidz',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              'V.29.6',
+              style: TextStyle(
+                color: Colors.white70,
+                fontWeight: FontWeight.w500,
+                fontSize: 13,
+              ),
+            ),
+          ],
         ),
-        centerTitle: true,
+        centerTitle: false,
       ),
       body: Column(
         children: [
@@ -133,12 +147,10 @@ class _TahfidzScreenState extends State<TahfidzScreen>
                 }
 
                 final dataList = snapshot.data!.data?.data ?? [];
-                final idTahfidz = snapshot.data!.data?.idTahfidz;
                 final filteredData = _filterData(dataList);
 
                 return Column(
                   children: [
-                    _buildAddButton(idTahfidz),
                     const SizedBox(height: 8),
                     if (dataList.isEmpty)
                       _buildEmptyState()
@@ -155,38 +167,7 @@ class _TahfidzScreenState extends State<TahfidzScreen>
       ),
     );
   }
-  Widget _buildAddButton(int? idTahfidz) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 2),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: ElevatedButton.icon(
-          onPressed: () async {
-            final result = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => TambahTahfidzScreen(idTahfidz: idTahfidz.toString()),
-              ),
-            );
-            if (result == true) {
-              _refreshData();
-            }
-          },
-          icon: const Icon(Icons.add, color: Colors.white),
-          label: const Text(
-            "Tambah Data",
-            style: TextStyle(color: Colors.white),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green[700],
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            elevation: 2,
-          ),
-        ),
-      ),
-    );
-  }
+  
   Widget _buildSearchBar() {
     return Container(
       margin: const EdgeInsets.all(16),
@@ -350,175 +331,214 @@ class _TahfidzScreenState extends State<TahfidzScreen>
   }
 
   Widget _buildPenilaianCard(PenilaianItem item, int index) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-            spreadRadius: 0,
-          ),
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-            spreadRadius: 0,
-          ),
+  return Container(
+    margin: const EdgeInsets.only(bottom: 20),
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Colors.white,
+          Colors.grey.shade50,
         ],
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(20),
-          onTap: () => _showDetailBottomSheet(item),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                // Header row dengan avatar dan nama
-                Row(
-                  children: [
-                    // Avatar dengan gradient dan shadow
-                    Container(
-                      width: 64,
-                      height: 64,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            Colors.primaries[index % Colors.primaries.length],
-                            Colors.primaries[index % Colors.primaries.length].shade600,
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.primaries[index % Colors.primaries.length].withOpacity(0.3),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Text(
-                          item.namaSantri.split(' ').map((e) => e[0]).take(2).join(),
+      borderRadius: BorderRadius.circular(24),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.08),
+          blurRadius: 25,
+          offset: const Offset(0, 8),
+        ),
+        BoxShadow(
+          color: Colors.black.withOpacity(0.04),
+          blurRadius: 8,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(24),
+        onTap: () => _showDetailBottomSheet(item),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+              Row(
+                children: [                 
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.namaSantri,
                           style: const TextStyle(
-                            color: Colors.white,
+                            fontSize: 15,
                             fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            letterSpacing: 0.5,
+                            color: Color(0xFF1A1A1A),
+                            letterSpacing: -0.3,
                           ),
                         ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    
-                    // Info utama
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item.namaSantri,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF1A1A1A),
-                              letterSpacing: -0.5,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  const Color(0xFF2E7D32).withOpacity(0.1),
-                                  const Color(0xFF4CAF50).withOpacity(0.1),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.teal.shade50,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(color: Colors.teal.shade200),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(Icons.calendar_today_rounded, size: 14, color: Colors.teal),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    '${(item.namaBulan != null && item.namaBulan!.isNotEmpty) ? item.namaBulan : '-'} ${(item.tahun != null && item.tahun.toString().isNotEmpty) ? item.tahun : '-'}',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.teal.shade800,
+                                    ),
+                                  ),
                                 ],
                               ),
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: const Color(0xFF2E7D32).withOpacity(0.2),
-                                width: 1,
+                            ),
+
+                            const SizedBox(width: 10),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: item.juz != null && item.juz.toString().isNotEmpty
+                                      ? [
+                                          const Color(0xFF2E7D32).withOpacity(0.1),
+                                          const Color(0xFF4CAF50).withOpacity(0.15),
+                                        ]
+                                      : [
+                                          Colors.grey.shade100,
+                                          Colors.grey.shade200,
+                                        ],
+                                ),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: item.juz != null && item.juz.toString().isNotEmpty
+                                      ? const Color(0xFF2E7D32).withOpacity(0.3)
+                                      : Colors.grey.withOpacity(0.3),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    item.juz != null && item.juz.toString().isNotEmpty
+                                        ? Icons.menu_book_rounded
+                                        : Icons.remove_circle_outline,
+                                    size: 16,
+                                    color: item.juz != null && item.juz.toString().isNotEmpty
+                                        ? const Color(0xFF2E7D32)
+                                        : Colors.grey.shade600,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    item.juz != null && item.juz.toString().isNotEmpty
+                                        ? '${item.juz}'
+                                        : 'Data Kosong',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
+                                      color: item.juz != null && item.juz.toString().isNotEmpty
+                                          ? const Color(0xFF2E7D32)
+                                          : Colors.grey.shade600,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            child: Text(
-                              '${item.juz}',
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFF2E7D32),
-                                letterSpacing: 0.3,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                
-                const SizedBox(height: 16),
-                
-                // Divider halus
-                Container(
-                  height: 1,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.transparent,
-                        Colors.grey.withOpacity(0.1),
-                        Colors.transparent,
+                          ],
+                        ),
+
                       ],
                     ),
                   ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Container(
+                height: 2,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.transparent,
+                      Colors.grey.withOpacity(0.2),
+                      Colors.transparent,
+                    ],
+                  ),
                 ),
-                
-                const SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        
-                        const SizedBox(width: 12),
-                        _buildActionButton(
-                          icon: Icons.delete_outline,
-                          label: 'Hapus',
-                          color: const Color(0xFFD32F2F),
-                          onPressed: () => _confirmDelete(item.id),
+              ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildActionButton(
+                    icon: Icons.delete_outline_rounded,
+                    label: 'Hapus',
+                    color: const Color(0xFFD32F2F),
+                    onPressed: () => _confirmDelete(item.id),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.blue.shade400, Colors.blue.shade600],
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.blue.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
                         ),
                       ],
                     ),
-                    
-                    // Chevron dengan animasi
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(0.08),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
                         borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(
-                        Icons.arrow_forward_ios,
-                        color: Colors.grey[600],
-                        size: 16,
+                        onTap: () => _showDetailBottomSheet(item),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: const [
+                              Text(
+                                'Detail',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              SizedBox(width: 8),
+                              Icon(
+                                Icons.arrow_forward_rounded,
+                                color: Colors.white,
+                                size: 16,
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-                  ],
-                ),
-              ],
-            ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildActionButton({
     required IconData icon,
@@ -532,31 +552,23 @@ class _TahfidzScreenState extends State<TahfidzScreen>
         borderRadius: BorderRadius.circular(12),
         onTap: onPressed,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.08),
+            color: color.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: color.withOpacity(0.2),
-              width: 1,
-            ),
+            border: Border.all(color: color.withOpacity(0.3)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                icon,
-                color: color,
-                size: 18,
-              ),
+              Icon(icon, color: color, size: 16),
               const SizedBox(width: 6),
               Text(
                 label,
                 style: TextStyle(
                   color: color,
-                  fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  letterSpacing: 0.2,
+                  fontSize: 12,
                 ),
               ),
             ],
@@ -591,8 +603,6 @@ class _TahfidzScreenState extends State<TahfidzScreen>
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              
-              // Header
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: Row(
@@ -709,7 +719,9 @@ class _TahfidzScreenState extends State<TahfidzScreen>
               const SizedBox(height: 4),
               Flexible(
                 child: Text(
-                  detail['value'].toString(),
+                  (detail['value'] != null && detail['value'].toString().trim().isNotEmpty)
+                      ? detail['value'].toString()
+                      : '-',
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

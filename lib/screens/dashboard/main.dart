@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'dashboard_screen.dart';
-import 'dashboard_screen.dart';
 import 'tahfidz_screen.dart';
 
 class MainScreen extends StatefulWidget {
+  final int initialIndex; 
 
   const MainScreen({
     Key? key,
+    this.initialIndex = 0,
   }) : super(key: key);
 
   @override
@@ -14,7 +15,13 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 0; 
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex;
+  }
 
   final List<BottomNavigationBarItem> _navItems = [
     BottomNavigationBarItem(

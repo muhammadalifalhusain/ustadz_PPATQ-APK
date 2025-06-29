@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'main.dart';
 import '../../models/dashboard_model.dart';
 import '../../models/tambah_tahfidz_model.dart';
 import '../../models/kode_juz_model.dart';
@@ -9,11 +10,20 @@ import '../../services/kode_juz_service.dart';
 
 class TambahTahfidzScreen extends StatefulWidget {
   final String idTahfidz;
-  const TambahTahfidzScreen({Key? key, required this.idTahfidz}) : super(key: key);
+  final String namaSantri;
+  final int noInduk;
+
+  const TambahTahfidzScreen({
+    Key? key,
+    required this.idTahfidz,
+    required this.namaSantri,
+    required this.noInduk,
+  }) : super(key: key);
 
   @override
   State<TambahTahfidzScreen> createState() => _TambahTahfidzScreenState();
 }
+
 
 class _TambahTahfidzScreenState extends State<TambahTahfidzScreen> {
   List<Santri> allSantri = [];
@@ -141,12 +151,12 @@ class _TambahTahfidzScreenState extends State<TambahTahfidzScreen> {
   }
 
   void _submitForm() async {
-    if (selectedSantri == null || selectedJuz == null) {
+    if (selectedJuz == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Santri dan Juz harus dipilih'),
+          content: Text('Juz harus dipilih'),
           backgroundColor: Colors.red,
-        )
+        ),
       );
       return;
     }
@@ -154,16 +164,14 @@ class _TambahTahfidzScreenState extends State<TambahTahfidzScreen> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
+        return const Center(child: CircularProgressIndicator());
       },
     );
 
     final request = TambahTahfidzModel(
       tanggal: DateFormat('yyyy-MM-dd').format(selectedDate),
       idTahfidz: widget.idTahfidz,
-      noInduk: selectedSantri!.noInduk.toString(),
+      noInduk: widget.noInduk.toString(), 
       kodeJuzSurah: selectedJuz!.kode,
       hafalan: nilaiMap[nilaiHafalan]!,
       tilawah: nilaiMap[nilaiTilawah]!,
@@ -178,25 +186,31 @@ class _TambahTahfidzScreenState extends State<TambahTahfidzScreen> {
     );
 
     final success = await TambahTahfidzService.submitTahfidz(request);
-    Navigator.of(context).pop();
+    Navigator.of(context).pop(); 
 
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Data berhasil ditambahkan'),
           backgroundColor: Colors.green,
-        )
+        ),
       );
-      Navigator.pop(context, true);
+      
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => MainScreen(initialIndex: 1)),
+        (route) => false,
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Gagal mengirim data'),
           backgroundColor: Colors.red,
-        )
+        ),
       );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -231,7 +245,7 @@ class _TambahTahfidzScreenState extends State<TambahTahfidzScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        "Pilih Santri",
+                        "Nama Santri",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -239,73 +253,27 @@ class _TambahTahfidzScreenState extends State<TambahTahfidzScreen> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      TextField(
-                        controller: _santriController,
-                        decoration: InputDecoration(
-                          labelText: 'Cari Nama Santri',
-                          prefixIcon: const Icon(Icons.search, color: Colors.green),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Colors.green, width: 2),
-                          ),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.green.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.green.shade200),
                         ),
-                        onChanged: filterSantri,
-                      ),
-                      
-                      if (searchKeyword.isNotEmpty && filteredSantri.isNotEmpty) ...[
-                        const SizedBox(height: 10),
-                        Container(
-                          height: 150,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey.shade300),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: ListView.builder(
-                            itemCount: filteredSantri.length,
-                            itemBuilder: (context, index) {
-                              final santri = filteredSantri[index];
-                              return ListTile(
-                                title: Text(santri.nama),
-                                subtitle: Text("Kelas: ${santri.kelas}"),
-                                onTap: () {
-                                  setState(() {
-                                    selectedSantri = santri;
-                                    filteredSantri = [];
-                                    searchKeyword = '';
-                                    _santriController.text = santri.nama;
-                                  });
-                                },
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                      if (selectedSantri != null) ...[
-                        const SizedBox(height: 12),
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.green.shade50,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.green.shade200),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.person, color: Colors.green),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  "Santri: ${selectedSantri!.nama} (${selectedSantri!.kelas})",
-                                  style: const TextStyle(fontWeight: FontWeight.w500),
-                                ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.person, color: Colors.green),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                "Santri: ${widget.namaSantri}", // ✅ Nama dari parameter
+                                style: const TextStyle(fontWeight: FontWeight.w500),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ],
                   ),
                 ),
@@ -475,9 +443,7 @@ class _TambahTahfidzScreenState extends State<TambahTahfidzScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
-
-              // Submit Button
+              const SizedBox(height: 18),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
