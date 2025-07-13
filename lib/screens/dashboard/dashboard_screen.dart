@@ -105,9 +105,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
             Text(
-              'V.29.6',
+              'V.1.1.7',
               style: TextStyle(
-                color: Colors.white70,
+                color: Colors.white,
                 fontWeight: FontWeight.w500,
                 fontSize: 13,
               ),
@@ -197,8 +197,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              const SizedBox(height: 10),
-              _buildLogoutButton(context),
             ],
           ),
         ),
@@ -213,7 +211,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildLogoutButton(context),
             _buildUstadInfoCard(),
             const SizedBox(height: 16),
             _buildSantriListHeader(),
@@ -224,55 +221,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     );
   }
-
-  Widget _buildLogoutButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12, left: 4),
-      child: SizedBox(
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 216, 47, 72),
-            borderRadius: BorderRadius.circular(14),
-            boxShadow: [
-              BoxShadow(
-                color: const Color.fromARGB(255, 192, 33, 22).withOpacity(0.1),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(14),
-            onTap: () async {
-              await SessionManager.clearSession();
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (_) => LoginScreen()),
-                (route) => false,
-              );
-            },
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: const [
-                Icon(Icons.logout, color: Colors.white, size: 16),
-                SizedBox(width: 6),
-                Text(
-                  'Keluar',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
 
   Widget _buildUstadInfoCard() {
     return Container(
@@ -299,73 +247,109 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(20),
-                child: Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ClipOval(
-                      child: Image.network(
-                        'https://manajemen.ppatq-rf.id/assets/img/upload/photo/${ustadSantriData!.photoUstad}',
-                        width: 56,
-                        height: 56,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return CircleAvatar(
-                            radius: 28,
-                            backgroundColor: Colors.grey.shade400,
-                            child: const Icon(Icons.person, color: Colors.white),
-                          );
-                        },
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) return child;
-                          return SizedBox(
+                    // Section info ustad
+                    Row(
+                      children: [
+                        ClipOval(
+                          child: Image.network(
+                            'https://manajemen.ppatq-rf.id/assets/img/upload/photo/${ustadSantriData!.photoUstad}',
                             width: 56,
                             height: 56,
-                            child: const Center(
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            ustadSantriData!.namaUstad,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF1A1A1A),
-                            ),
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return CircleAvatar(
+                                radius: 28,
+                                backgroundColor: Colors.grey.shade400,
+                                child: const Icon(Icons.person, color: Colors.white),
+                              );
+                            },
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return SizedBox(
+                                width: 56,
+                                height: 56,
+                                child: const Center(
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                ),
+                              );
+                            },
                           ),
-                          Text(
-                            'Ustad Pengampu',
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Row(
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Icon(
-                                Icons.school,
-                                size: 14,
-                                color: Colors.grey[600],
-                              ),
-                              const SizedBox(width: 4),
                               Text(
-                                'Kelas ${ustadSantriData!.kodeTahfidz.toUpperCase()}',
+                                ustadSantriData!.namaUstad,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xFF1A1A1A),
+                                ),
+                              ),
+                              Text(
+                                'Ustad Pengampu',
                                 style: TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 13,
                                   color: Colors.grey[600],
                                 ),
                               ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.school,
+                                    size: 14,
+                                    color: Colors.grey[600],
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'Kelas ${ustadSantriData!.kodeTahfidz.toUpperCase()}',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
-                        ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () async {
+                          await SessionManager.clearSession();
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (_) => LoginScreen()),
+                            (route) => false,
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFD32F2F),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          elevation: 2,
+                        ),
+                        icon: const Icon(Icons.logout, size: 18),
+                        label: const Text(
+                          'Keluar',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -377,7 +361,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     );
   }
-
 
   Widget _buildSantriListHeader() {
     final totalSantri = ustadSantriData!.listSantri.length;
@@ -474,9 +457,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     },
                   ),
                 ),
-
-
-
                 const SizedBox(width: 16),
                 Expanded(
                   child: Column(

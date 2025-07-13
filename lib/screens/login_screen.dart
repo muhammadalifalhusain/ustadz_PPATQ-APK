@@ -323,12 +323,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       letterSpacing: 1,
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  const Icon(
-                    Icons.arrow_forward_rounded,
-                    color: Colors.white,
-                    size: 20,
-                  ),
                 ],
               ),
       ),
